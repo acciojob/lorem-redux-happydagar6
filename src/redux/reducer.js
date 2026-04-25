@@ -4,6 +4,7 @@ import {
     FETCH_DATA_SUCCESS
 } from "./actions"
 
+
 const initialState = {
     loading: true,
     data: [],

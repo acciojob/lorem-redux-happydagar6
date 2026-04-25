@@ -19,7 +19,7 @@ const LoremApp = () => {
         <h4 className="subtitle">Below Contains A title and Body gotten froma random API, Please take your time to Review</h4>
         <hr />
       </header>
-
+  
       {loading && <p className="loading-message">Loading data...</p>}
       {error && <p className="error-messages">Error fetching data: {error}</p>}
 

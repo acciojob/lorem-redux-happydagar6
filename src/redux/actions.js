@@ -23,11 +23,20 @@ const normalizePayload = (payload) => {
         if (Array.isArray(payload.posts)) {
             return payload.posts;
         }
+        if (payload.posts && typeof payload.posts === 'object') {
+            return [payload.posts];
+        }
         if (Array.isArray(payload.data)) {
             return payload.data;
         }
+        if (payload.data && typeof payload.data === 'object') {
+            return [payload.data];
+        }
         if (Array.isArray(payload.items)) {
             return payload.items;
+        }
+        if (payload.items && typeof payload.items === 'object') {
+            return [payload.items];
         }
         // Otherwise wrap the object in an array
         return [payload];
@@ -41,7 +50,7 @@ export const fetchData = () => (dispatch) => {
 
     return fetch("https://api.lorem.com/ipsum")
         .then((response) => {
-            if (!response.ok) {
+            if (response && response.ok === false) {
                 throw new Error(`Request failed with status ${response.status}`);
             }
 
