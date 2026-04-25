@@ -9,61 +9,47 @@ const FALLBACK_POSTS = [
     }
 ];
 
-// The normalizePayload function is a utility that ensures the payload is always 
-// an array. It checks if the payload is already an array, and if so, it returns 
-// it as is. If the payload is an object, it checks for common data properties 
-// like 'posts' or 'data'. Otherwise it wraps the object in an array.
+// The normalizePayload function ensures the payload is always an array of posts
 const normalizePayload = (payload) => {
+    // If already an array, return it
     if (Array.isArray(payload)) {
         return payload;
     }
 
+    // If it's an object, check for common wrapped structures
     if (payload && typeof payload === 'object') {
-        // Check for common API response structures
-        if (Array.isArray(payload.posts)) {
-            return payload.posts;
+        // Try common property names for arrays
+        if (Array.isArray(payload.posts)) return payload.posts;
+        if (Array.isArray(payload.data)) return payload.data;
+        if (Array.isArray(payload.items)) return payload.items;
+        
+        // If it's a single post object with Title/Body, wrap it
+        if (payload.Title || payload.Body || payload.title || payload.body) {
+            return [payload];
         }
-        if (payload.posts && typeof payload.posts === 'object') {
-            return [payload.posts];
-        }
-        if (Array.isArray(payload.data)) {
-            return payload.data;
-        }
-        if (payload.data && typeof payload.data === 'object') {
-            return [payload.data];
-        }
-        if (Array.isArray(payload.items)) {
-            return payload.items;
-        }
-        if (payload.items && typeof payload.items === 'object') {
-            return [payload.items];
-        }
-        // Otherwise wrap the object in an array
-        return [payload];
+        
+        // For wrapped single objects
+        if (payload.posts && payload.posts.Title) return [payload.posts];
+        if (payload.data && payload.data.Title) return [payload.data];
     }
 
-    return [];
+    // Default: return as single item or empty
+    return payload ? [payload] : [];
 };
 
 export const fetchData = () => (dispatch) => {
     dispatch({ type: FETCH_DATA_REQUEST });
 
     return fetch("https://api.lorem.com/ipsum")
-        .then((response) => {
-            // Accept any response, attempt to parse JSON
-            return response.json().catch(() => ({}));
-        })
+        .then((response) => response.json())
         .then((data) => {
             const normalizedData = normalizePayload(data);
-            // Dispatch whatever we got - real data or empty array
-            // Never substitute with fallback on a "successful" response
             dispatch({
                 type: FETCH_DATA_SUCCESS,
                 payload: normalizedData
             });
         })
         .catch(() => {
-            // Only use fallback on actual network error (fetch failed, not parse)
             dispatch({
                 type: FETCH_DATA_SUCCESS,
                 payload: FALLBACK_POSTS
