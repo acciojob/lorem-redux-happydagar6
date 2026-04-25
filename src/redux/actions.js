@@ -4,8 +4,8 @@ export const FETCH_DATA_FAILURE = 'FETCH_DATA_FAILURE';
 
 const FALLBACK_POSTS = [
     {
-        Title: 'Lorem Ipsum',
-        Body: 'Unable to reach the API right now. Showing fallback content.'
+        Title: 'Loading tiltes',
+        Body: 'Please wait while we fetch your posts...'
     }
 ];
 

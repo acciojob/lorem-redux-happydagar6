@@ -28,7 +28,7 @@ const LoremApp = () => {
           {data.map((item, index) => (
             <li key={`${item.title || item.Title || "post"}-${index}`} className="card">
               <p className="title">
-                <strong>Title:</strong> {item.title || item.Title}
+                <strong>Title :</strong>{item.title || item.Title}
               </p>
               <p className="body">
                 <strong>Body:</strong> {item.body || item.Body}
