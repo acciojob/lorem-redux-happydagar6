@@ -15,15 +15,12 @@ const LoremApp = () => {
   return (
     <div className="app-container">
       <header className="header">
-        <h4>A short Naration of Lorem Ipsum</h4>
-        <p className="subtitle">
-          Below Contains a Title and Body gotten from a random API, Please take
-          your time to Review
-        </p>
+        <h1>A short Naration of Lorem Ipsum</h1>
+        <h4 className="subtitle">Below Contains A title and Body gotten froma random API, Please take your time to Review</h4>
         <hr />
       </header>
 
-      {loading && <h4 className="loading-message">Loading data...</h4>}
+      {loading && <p className="loading-message">Loading data...</p>}
       {error && <p className="error-messages">Error fetching data: {error}</p>}
 
       {!loading && (
