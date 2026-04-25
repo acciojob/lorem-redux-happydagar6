@@ -50,23 +50,20 @@ export const fetchData = () => (dispatch) => {
 
     return fetch("https://api.lorem.com/ipsum")
         .then((response) => {
-            if (response && response.ok === false) {
-                throw new Error(`Request failed with status ${response.status}`);
-            }
-
-            return response.json();
+            // Accept any response, attempt to parse JSON
+            return response.json().catch(() => ({}));
         })
         .then((data) => {
             const normalizedData = normalizePayload(data);
-            // Always dispatch real API data, even if empty
-            // Do not use fallback on successful response
+            // Dispatch whatever we got - real data or empty array
+            // Never substitute with fallback on a "successful" response
             dispatch({
                 type: FETCH_DATA_SUCCESS,
                 payload: normalizedData
             });
         })
         .catch(() => {
-            // Only use fallback on network errors
+            // Only use fallback on actual network error (fetch failed, not parse)
             dispatch({
                 type: FETCH_DATA_SUCCESS,
                 payload: FALLBACK_POSTS
