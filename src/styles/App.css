@@ -1,1 +1,42 @@
+.app-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
 
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.subtitle {
+    font-style: italic;
+    color: #555;
+}
+
+/* Grid layout matching the preview */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #fcfcfc;
+}
+
+.card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.card p {
+    margin: 0;
+    line-height: 1.5;
+    color: #333;
+}
