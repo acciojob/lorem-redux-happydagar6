@@ -5,22 +5,31 @@ export const FETCH_DATA_FAILURE = 'FETCH_DATA_FAILURE';
 const FALLBACK_POSTS = [
     {
         Title: 'Loading tiltes',
-        Body: 'Please wait while we fetch your posts...'
+        Body: 'Loading Body'
     }
 ];
 
 // The normalizePayload function is a utility that ensures the payload is always 
 // an array. It checks if the payload is already an array, and if so, it returns 
-// it as is. If the payload is an object, it wraps it in an array. If the payload 
-// is neither an array nor an object, it returns an empty array. This normalization 
-// step helps to ensure that the reducer can always work with a consistent data 
-// structure, simplifying the handling of the fetched data in the application.
+// it as is. If the payload is an object, it checks for common data properties 
+// like 'posts' or 'data'. Otherwise it wraps the object in an array.
 const normalizePayload = (payload) => {
     if (Array.isArray(payload)) {
         return payload;
     }
 
     if (payload && typeof payload === 'object') {
+        // Check for common API response structures
+        if (Array.isArray(payload.posts)) {
+            return payload.posts;
+        }
+        if (Array.isArray(payload.data)) {
+            return payload.data;
+        }
+        if (Array.isArray(payload.items)) {
+            return payload.items;
+        }
+        // Otherwise wrap the object in an array
         return [payload];
     }
 

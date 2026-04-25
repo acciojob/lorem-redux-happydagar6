@@ -31,7 +31,7 @@ const LoremApp = () => {
                 <strong>Title :</strong>{item.title || item.Title}
               </p>
               <p className="body">
-                <strong>Body:</strong> {item.body || item.Body}
+                <strong>Body :</strong>{item.body || item.Body}
               </p>
             </li>
           ))}
