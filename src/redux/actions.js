@@ -19,21 +19,35 @@ const normalizePayload = (payload) => {
     // If it's an object, check for common wrapped structures
     if (payload && typeof payload === 'object') {
         // Check for nested arrays first
-        if (payload.posts && Array.isArray(payload.posts)) return payload.posts;
-        if (payload.data && Array.isArray(payload.data)) return payload.data;
-        if (payload.items && Array.isArray(payload.items)) return payload.items;
+        if (payload.posts && Array.isArray(payload.posts) && payload.posts.length > 0) {
+            return payload.posts;
+        }
+        if (payload.data && Array.isArray(payload.data) && payload.data.length > 0) {
+            return payload.data;
+        }
+        if (payload.items && Array.isArray(payload.items) && payload.items.length > 0) {
+            return payload.items;
+        }
         
-        // Check if this object itself is a post (has Title or Body)
-        if ((payload.Title || payload.title) && (payload.Body || payload.body)) {
+        // Check if this object itself looks like a post
+        // Accept if it has Title OR title (case doesn't matter)
+        const hasTitle = payload.Title || payload.title;
+        const hasBody = payload.Body || payload.body;
+        
+        if (hasTitle || hasBody) {
             return [payload];
         }
         
-        // Check for nested objects that might be posts
-        if (payload.posts && !Array.isArray(payload.posts) && (payload.posts.Title || payload.posts.title)) {
-            return [payload.posts];
+        // Check nested single objects
+        if (payload.posts && typeof payload.posts === 'object' && !Array.isArray(payload.posts)) {
+            if (payload.posts.Title || payload.posts.title) {
+                return [payload.posts];
+            }
         }
-        if (payload.data && !Array.isArray(payload.data) && (payload.data.Title || payload.data.title)) {
-            return [payload.data];
+        if (payload.data && typeof payload.data === 'object' && !Array.isArray(payload.data)) {
+            if (payload.data.Title || payload.data.title) {
+                return [payload.data];
+            }
         }
     }
 
@@ -44,27 +58,28 @@ const normalizePayload = (payload) => {
 export const fetchData = () => (dispatch) => {
     dispatch({ type: FETCH_DATA_REQUEST });
 
-    return fetch("https://api.lorem.com/ipsum")
+    fetch("https://api.lorem.com/ipsum")
         .then((response) => {
-            // Handle both real Response objects and Cypress mock objects
-            if (response && typeof response === 'object') {
-                // Try to get JSON
-                if (typeof response.json === 'function') {
-                    return response.json().then(data => data).catch(() => response);
-                }
-                // If it's already an object (Cypress mock might be), return it
-                return response;
+            // If response has json method, use it
+            if (response && typeof response.json === 'function') {
+                return response.json();
             }
-            return {};
+            // Otherwise assume response body is already parsed data
+            return response;
         })
         .then((data) => {
             const normalizedData = normalizePayload(data);
+            
+            // Only use fallback if normalized data is empty
+            const finalPayload = (normalizedData && normalizedData.length > 0) ? normalizedData : FALLBACK_POSTS;
+            
             dispatch({
                 type: FETCH_DATA_SUCCESS,
-                payload: normalizedData.length > 0 ? normalizedData : FALLBACK_POSTS
+                payload: finalPayload
             });
         })
-        .catch(() => {
+        .catch((error) => {
+            // Network error or other issue - use fallback
             dispatch({
                 type: FETCH_DATA_SUCCESS,
                 payload: FALLBACK_POSTS
