@@ -49,13 +49,15 @@ export const fetchData = () => (dispatch) => {
         })
         .then((data) => {
             const normalizedData = normalizePayload(data);
-
+            // Always dispatch real API data, even if empty
+            // Do not use fallback on successful response
             dispatch({
                 type: FETCH_DATA_SUCCESS,
-                payload: normalizedData.length ? normalizedData : FALLBACK_POSTS
+                payload: normalizedData
             });
         })
         .catch(() => {
+            // Only use fallback on network errors
             dispatch({
                 type: FETCH_DATA_SUCCESS,
                 payload: FALLBACK_POSTS
